@@ -1,0 +1,7 @@
+{
+  "name": "dirstat-electron",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "ascarbek <ascarbek@gmail.com>",
+  "license": "MIT"
+}

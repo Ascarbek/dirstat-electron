@@ -1,0 +1,22 @@
+@import '@fontsource/inter';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+input,
+input:focus,
+button,
+button:focus {
+  outline: 0;
+}
+
+input,
+textarea {
+  background: transparent;
+}
+
