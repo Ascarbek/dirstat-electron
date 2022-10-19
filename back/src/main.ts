@@ -16,9 +16,12 @@ const createWindow = async () => {
 };
 
 app.whenReady().then(async () => {
-  ipcMain.handle("readFolder", (e, args) => {
+  ipcMain.handle("readFolder", async (e, args) => {
     if (args._path === "default") {
-      return readFolder(process.cwd());
+      console.time("readFolder");
+      const result = await readFolder(path.join(process.cwd(), "."));
+      console.timeEnd("readFolder");
+      return result;
     } else {
       return readFolder(args._path);
     }
