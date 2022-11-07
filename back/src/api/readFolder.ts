@@ -1,8 +1,15 @@
 import * as fs from "fs-extra";
 import * as path from "path";
 import type { IFolderData } from "../types/FolderData";
+import {
+  addFileCount,
+  addFolderCount,
+  addScanResult,
+} from "../types/FolderData";
 
-const readFolder: (_path: string) => Promise<IFolderData[]> = async (_path) => {
+export const readFolder: (_path: string) => Promise<IFolderData[]> = async (
+  _path
+) => {
   const files = fs.readdirSync(_path);
 
   const res: IFolderData[] = [];
@@ -12,6 +19,8 @@ const readFolder: (_path: string) => Promise<IFolderData[]> = async (_path) => {
       const stat = await fs.stat(path.join(_path, file));
 
       if (stat.isFile()) {
+        addFileCount();
+        addScanResult(_path, file);
         res.push({
           name: file,
           size: stat.size,
@@ -22,11 +31,9 @@ const readFolder: (_path: string) => Promise<IFolderData[]> = async (_path) => {
         });
       }
       if (stat.isDirectory()) {
+        addFolderCount();
         const subItems = await readFolder(path.join(_path, file));
-        const size = subItems.reduce(
-          (prev, curr, index, arr) => prev + curr.size,
-          0
-        );
+        const size = subItems.reduce((prev, curr) => prev + curr.size, 0);
         res.push({
           name: file,
           size: size,
@@ -43,5 +50,3 @@ const readFolder: (_path: string) => Promise<IFolderData[]> = async (_path) => {
 
   return res;
 };
-
-export default readFolder;

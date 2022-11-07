@@ -1,6 +1,13 @@
-import { BrowserWindow, app, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
-import readFolder from "./api/readFolder";
+import { readFolder } from "./api/readFolder";
+import {
+  clearCounters,
+  clearScanResults,
+  getFileCount,
+  getFolderCount,
+  getScanResults,
+} from "./types/FolderData";
 
 const createWindow = async () => {
   const win = new BrowserWindow({
@@ -17,14 +24,20 @@ const createWindow = async () => {
 
 app.whenReady().then(async () => {
   ipcMain.handle("readFolder", async (e, args) => {
-    if (args._path === "default") {
-      console.time("readFolder");
-      const result = await readFolder(path.join(process.cwd(), "."));
-      console.timeEnd("readFolder");
-      return result;
-    } else {
-      return readFolder(args._path);
-    }
+    clearCounters();
+    clearScanResults();
+    const startPath =
+      args._path === "default" ? path.join(process.cwd(), "..") : args._path;
+
+    return await readFolder(startPath);
+  });
+
+  ipcMain.handle("getStatus", () => {
+    return { folderCount: getFolderCount(), fileCount: getFileCount() };
+  });
+
+  ipcMain.handle("getScanResults", () => {
+    return getScanResults();
   });
 
   await createWindow();
