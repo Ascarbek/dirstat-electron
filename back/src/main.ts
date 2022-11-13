@@ -6,12 +6,14 @@ import {
   clearScanResults,
   getFileCount,
   getFolderCount,
-  getScanResults,
+  getFolderFilesMap,
+  getFolderSizeMap,
+  getSubFoldersMap,
 } from "./types/FolderData";
 
 const createWindow = async () => {
   const win = new BrowserWindow({
-    width: 800,
+    width: 1200,
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -29,15 +31,23 @@ app.whenReady().then(async () => {
     const startPath =
       args._path === "default" ? path.join(process.cwd(), "..") : args._path;
 
-    return await readFolder(startPath);
+    await readFolder(startPath);
   });
 
   ipcMain.handle("getStatus", () => {
     return { folderCount: getFolderCount(), fileCount: getFileCount() };
   });
 
-  ipcMain.handle("getScanResults", () => {
-    return getScanResults();
+  ipcMain.handle("getFolderSizeMap", () => {
+    return getFolderSizeMap();
+  });
+
+  ipcMain.handle("getFolderFilesMap", () => {
+    return getFolderFilesMap();
+  });
+
+  ipcMain.handle("getSubFoldersMap", () => {
+    return getSubFoldersMap();
   });
 
   await createWindow();

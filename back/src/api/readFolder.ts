@@ -1,18 +1,16 @@
 import * as fs from "fs-extra";
 import * as path from "path";
-import type { IFolderData } from "../types/FolderData";
 import {
   addFileCount,
+  addFileToFolder,
   addFolderCount,
-  addScanResult,
+  addSubFolder,
 } from "../types/FolderData";
 
-export const readFolder: (_path: string) => Promise<IFolderData[]> = async (
-  _path
-) => {
+export const readFolder: (_path: string) => Promise<void> = async (_path) => {
   const files = fs.readdirSync(_path);
 
-  const res: IFolderData[] = [];
+  const folders: string[] = [];
 
   for (const file of files) {
     try {
@@ -20,33 +18,23 @@ export const readFolder: (_path: string) => Promise<IFolderData[]> = async (
 
       if (stat.isFile()) {
         addFileCount();
-        addScanResult(_path, file);
-        res.push({
-          name: file,
-          size: stat.size,
-          isFile: true,
-          type: path.extname(file),
-          isFolder: false,
-          items: [],
-        });
+        addFileToFolder(_path, file, stat.size, path.extname(file));
       }
       if (stat.isDirectory()) {
         addFolderCount();
-        const subItems = await readFolder(path.join(_path, file));
-        const size = subItems.reduce((prev, curr) => prev + curr.size, 0);
-        res.push({
-          name: file,
-          size: size,
-          isFile: false,
-          isFolder: true,
-          type: "",
-          items: subItems,
-        });
+        addSubFolder(_path, path.join(_path, file));
+        folders.push(file);
       }
     } catch (e) {
       console.error("some error: ", file);
     }
   }
 
-  return res;
+  for (const folder of folders) {
+    try {
+      await readFolder(path.join(_path, folder));
+    } catch (e) {
+      console.error("some error: ", folder);
+    }
+  }
 };
