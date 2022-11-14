@@ -4,7 +4,7 @@
   import type { IFieldMap } from './components/data';
 
   let list: IFieldMap[] = [];
-  let columns: string[] = ['name', 'size', 'type'];
+  let columns: string[] = ['name', 'size','percent', 'type'];
   let fields: IFieldMap = {
     name: {
       title: 'Name',
@@ -13,6 +13,10 @@
     size: {
       title: 'Size',
       type: 'number',
+    },
+    percent: {
+      title: '%',
+      type: 'string',
     },
     type: {
       title: 'Type',
@@ -43,6 +47,7 @@
         const obj: IFieldMap = {};
         obj['name'] = { title: 'Name', type: 'string', value: r.name };
         obj['size'] = { title: 'Size', type: 'number', value: r.size };
+        obj['percent'] = { title: 'Percent', type: 'string', value: 100 };
         obj['type'] = { title: 'Type', type: 'string', value: r.type };
 
         list.push(obj);
