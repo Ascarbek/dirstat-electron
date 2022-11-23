@@ -54,9 +54,17 @@
       });
     }, 100);
   });
+
+  let deltaX = 0;
+  let deltaY = 0;
+
+  const onWheel = (e) => {
+    deltaX+=e.deltaX;
+    deltaY+=e.deltaY;
+  }
 </script>
 
-<div class="min-w-screen min-h-screen flex flex-col bg-black text-neutral-300">
+<div class="w-screen h-screen overflow-hidden flex flex-col bg-black text-neutral-300">
   <div class="py-4 px-8 flex items-center justify-end bg-neutral-900">
     <div class="flex items-center mr-4">
       <span class="mr-2">Files:</span>
@@ -68,5 +76,9 @@
     </div>
   </div>
 
-  <Table rows="{list}" fields="{fields}" columns="{columns}" />
+  <div class="relative">
+    <div class="absolute" style="{`transform: translateX(${-deltaX}px)`}">
+  <Table rows="{list}" fields="{fields}" columns="{columns}" on:wheel={onWheel} deltaY="{deltaY}"/>
+    </div>
+  </div>
 </div>

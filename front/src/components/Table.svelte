@@ -4,6 +4,7 @@
   export let fields: IFieldMap = {};
   export let columns: string[] = [];
   export let columnSizes = [600, 100, 150, 100];
+  export let deltaY = 0;
 
   let movingColumn = -1;
 
@@ -23,7 +24,7 @@
   };
 </script>
 
-<div class="flex bg-neutral-800 border border-neutral-700 px-4 py-1 border-l-0 border-t-0 border-r-0">
+<div on:wheel class="overflow-hidden flex bg-neutral-800 border border-neutral-700 px-4 py-1 border-l-0 border-t-0 border-r-0">
   {#each columns as name, index}
     <div style="{`width: ${columnSizes[index]}px`}" class="column">{fields[name].title}</div>
     <div on:mousedown="{(e) => onColMouseDown(e, index)}" class="px-1.5 cursor-col-resize">
@@ -32,9 +33,10 @@
   {/each}
 </div>
 
-<div class="list overflow-auto">
+<div on:wheel class="list overflow-y-auto" >
   {#each rows as row, index}
-    <div class="flex items-center even:bg-neutral-900 odd:bg-neutral-800 text-xs px-4">
+    <!--style="{`transform: translateY(${-deltaY}px)`}"-->
+    <div class="flex items-center even:bg-neutral-900 odd:bg-neutral-800 text-xs px-4" >
       {#each columns as name, index}
         <div
           style="{`width: ${columnSizes[index]}px`}"
